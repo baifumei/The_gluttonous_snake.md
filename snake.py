@@ -21,6 +21,20 @@ y_food = 50
 speed = 5
 snake_color = (0, 255, 90)
 
+
+class Food:
+    x = 0
+    y = 0
+
+    def new_place(self):
+        self.x = round(random.randrange(0, windw_height) / 10.0) * 10.0
+        self.y = round(random.randrange(0, windw_width) / 10.0) * 10.0
+
+
+apple = Food()
+apple.new_place()
+
+
 # действия
 game_over = False
 while not game_over:
@@ -55,11 +69,16 @@ while not game_over:
     elif y < 0:
         y = windw_height
 
+    if x == apple.x and y == apple.y:
+        print("Yummy!!")
+
     windw.fill((0, 0, 0))
     windw.blit(background, (0, 0))
 
     pygame.draw.rect(windw, snake_color, (x, y, height, width))
+    pygame.draw.rect(windw, (255, 0, 0), (apple.x, apple.y, height, width))
     pygame.display.update()
+
 
 pygame.quit()
 quit()
