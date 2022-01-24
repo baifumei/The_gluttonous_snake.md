@@ -9,17 +9,15 @@ windw = pygame.display.set_mode((windw_width, windw_height))
 background = pygame.image.load('/Users/ekaterinak/Downloads/696.jpg')
 pygame.display.set_caption("Прожорливая змейка")
 
-# параметры
-x = 0
-y = 0
+# arguments:
+x_snake = 0
+y_snake = 0
 delta_x, delta_y = 1, 0
-width = 10
-height = 10
-lenght = 1
-x_food = 50
-y_food = 50
+block = 10
+length = 1
 speed = 5
 snake_color = (0, 255, 90)
+snake_length = []
 
 
 class Food:
@@ -35,7 +33,12 @@ apple = Food()
 apple.new_place()
 
 
-# действия
+def snake(block, snake_length):
+    for x in snake_length:
+        pygame.draw.rect(windw, snake_color, [x[0], x[1], block, block])
+
+
+# actions:
 game_over = False
 while not game_over:
     pygame.time.delay(50)
@@ -57,27 +60,41 @@ while not game_over:
         delta_x = 0
         delta_y = 1
 
-    x += delta_x * speed
-    y += delta_y * speed
+    x_snake += delta_x * speed
+    y_snake += delta_y * speed
 
-    if x > windw_width:
-        x = 0
-    elif x < 0:
-        x = windw_width
-    elif y > windw_height:
-        y = 0
-    elif y < 0:
-        y = windw_height
-
-    if x == apple.x and y == apple.y:
-        print("Yummy!!")
+    if x_snake > windw_width:
+        x_snake = 0
+    elif x_snake < 0:
+        x_snake = windw_width
+    elif y_snake > windw_height:
+        y_snake = 0
+    elif y_snake < 0:
+        y_snake = windw_height
 
     windw.fill((0, 0, 0))
     windw.blit(background, (0, 0))
+    pygame.draw.rect(windw, snake_color, [x_snake, y_snake, block, block])
+    pygame.draw.rect(windw, (255, 0, 0), (apple.x, apple.y, block, block))
 
-    pygame.draw.rect(windw, snake_color, (x, y, height, width))
-    pygame.draw.rect(windw, (255, 0, 0), (apple.x, apple.y, height, width))
+    snake_Head = []
+    snake_Head.append(x_snake)
+    snake_Head.append(y_snake)
+    snake_length.append(snake_Head)
+
+    if len(snake_length) > length:
+        del snake_length[0]
+
+    for i in snake_length[:-1]:
+        if i == snake_Head:
+            game_over = True
+
+    snake(block, snake_length)
+
     pygame.display.update()
+
+    if x_snake == apple.x and y_snake == apple.y:
+        length += 1
 
 
 pygame.quit()
